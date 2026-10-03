@@ -27,9 +27,11 @@
     }
     button, input { font: inherit; }
     button { cursor: pointer; }
+    :focus-visible { outline: 3px solid #5268e8; outline-offset: 2px; }
     .app { width: min(1120px, calc(100% - 44px)); margin: 0 auto; padding: 30px 0 22px; }
     .topbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 27px; }
     .brand { display: flex; align-items: center; gap: 11px; flex: 0 0 auto; }
+    .top-actions { display: flex; gap: 7px; }
     .brand-mark { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 14px; background: linear-gradient(145deg, #ffcc7b, #ff9b6c); box-shadow: 0 7px 15px #ffad762f; font-size: 22px; }
     .brand-name { margin: 0; font-size: 20px; font-weight: 850; letter-spacing: -.06em; }
     .brand-note { margin: 2px 0 0; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
@@ -43,20 +45,32 @@
     .icon-button:hover, .unit-button:hover { border-color: #c6d0e0; background: #f9fbff; transform: translateY(-1px); }
     .search-submit { min-width: 72px; padding: 0 15px; border: 0; border-radius: 13px; color: #fff; background: #687df0; box-shadow: 0 7px 14px #687df02c; font-size: 12px; font-weight: 800; }
     .search-submit:hover { background: #536ae7; }
-    .suggestions { position: absolute; z-index: 5; top: 53px; right: 52px; left: 0; display: none; overflow: hidden; border: 1px solid #e5eaf0; border-radius: 14px; background: white; box-shadow: 0 18px 40px #15243a1c; }
+    .suggestions { position: absolute; z-index: 5; top: 53px; right: 80px; left: 0; display: none; overflow: hidden; border: 1px solid #e5eaf0; border-radius: 14px; background: white; box-shadow: 0 18px 40px #15243a1c; }
     .suggestions.open { display: block; }
     .suggestion { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 0; border-bottom: 1px solid #f0f2f6; color: var(--ink); background: #fff; text-align: left; }
     .suggestion:last-child { border-bottom: 0; }
     .suggestion:hover { background: #f5f7ff; }
+    .suggestion[aria-selected="true"] { background: #eef1ff; }
+    .suggestions-message { padding: 13px 14px; color: var(--muted); font-size: 12px; }
     .suggestion strong { font-size: 12px; }
     .suggestion small { color: var(--muted); font-size: 10px; }
-    .status { min-height: 17px; margin: -17px 0 12px; color: #64748b; font-size: 11px; }
+    .place-current { display: flex; align-items: center; gap: 6px; margin: -10px 0 3px; color: #34445c; font-size: 13px; }
+    .place-current span { color: #f2a448; font-size: 9px; }
+    .place-current strong { font-weight: 750; }
+    .status { min-height: 17px; margin: 0 0 12px; color: #64748b; font-size: 11px; }
     .status.error { color: #c04a59; }
-    .quick { display: flex; align-items: center; gap: 8px; margin: 0 0 17px; color: #8995a7; font-size: 10px; }
+    .quick { display: flex; align-items: center; gap: 7px; margin: 0 0 8px; color: #8995a7; font-size: 10px; overflow-x: auto; }
     .quick button { padding: 6px 10px; border: 1px solid #e4e9ef; border-radius: 99px; color: #53647b; background: #ffffffa6; font-size: 10px; transition: .18s; }
     .quick button:hover { border-color: #bdc8ff; color: #536ae7; background: #fff; }
-    .main-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(265px, .85fr); align-items: start; gap: 16px; }
-    .left-column, .right-column { display: grid; gap: 16px; min-width: 0; }
+    .quick button[aria-pressed="true"] { border-color: #cbd4ff; color: #4f68df; background: #f1f3ff; }
+    .registered-locations { display: contents; }
+    .registered-place { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 3px; }
+    .registered-place .remove-place { width: 23px; min-height: 25px; padding: 0; border-radius: 50%; color: #8794a8; }
+    .register-place-form { display: flex; align-items: center; gap: 7px; margin: 0 0 12px; }
+    .register-place-form[hidden] { display: none; }
+    .register-place-form input { width: min(230px, 58vw); min-height: 38px; padding: 0 10px; border: 1px solid #e1e7ef; border-radius: 10px; background: #fff; }
+    .register-place-form button { min-height: 36px; padding: 0 11px; border: 1px solid #e1e7ef; border-radius: 10px; color: #53647b; background: #fff; }
+    .forecast-stack { display: grid; gap: 14px; min-width: 0; }
     .hero { position: relative; min-height: 294px; overflow: hidden; padding: 27px 29px; border-radius: 23px; color: #fff; background: linear-gradient(124deg, #34498e 0%, #526dc5 54%, #83a7dc 100%); box-shadow: 0 18px 40px #405ca82b; }
     .hero::before, .hero::after { position: absolute; content: ""; pointer-events: none; }
     .hero::before { top: -105px; right: 7%; width: 260px; height: 260px; border: 1px solid #ffffff19; border-radius: 50%; box-shadow: 0 0 0 27px #ffffff08, 0 0 0 55px #ffffff07; }
@@ -89,23 +103,39 @@
     .hour strong { font-size: 12px; }
     .hour small { margin-top: -6px; color: #8c9cb0; font-size: 9px; }
     .week { display: grid; gap: 1px; }
-    .day { display: grid; grid-template-columns: 1fr 34px 47px minmax(48px, .8fr) 47px; align-items: center; gap: 8px; min-height: 43px; border-bottom: 1px solid #f0f2f5; }
+    .day { display: grid; grid-template-columns: 94px 100px 40px minmax(24px, 1fr) 54px; align-items: center; gap: 4px; min-height: 43px; border-bottom: 1px solid #f0f2f5; }
     .day:last-child { border-bottom: 0; }
-    .day-name { color: #506078; font-size: 10px; font-weight: 700; }
+    .forecast-tabs { display: flex; gap: 6px; padding: 3px; border-radius: 11px; background: #f2f4f8; }
+    .forecast-tabs button { min-height: 32px; padding: 0 11px; border: 0; border-radius: 8px; color: #718096; background: transparent; font-size: 11px; font-weight: 700; }
+    .forecast-tabs button[aria-pressed="true"] { color: #4f68df; background: #fff; box-shadow: 0 1px 4px #25354b12; }
+    .forecast-note { margin: 10px 0 0; color: var(--muted); font-size: 10px; }
+    .current-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr); gap: 14px; }
+    .current-side { display: grid; gap: 14px; }
+    .day-name { overflow: hidden; color: #506078; font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .day-name.today { color: #536ae7; }
-    .day .weather-emoji { text-align: center; font-size: 18px; }
+    .day-horizon { display: block; margin-top: 2px; color: #8794a8; font-size: 8px; font-weight: 600; }
+    .day-icons { display: grid; grid-template-columns: repeat(4, 22px); justify-content: start; gap: 2px; }
+    .day-slot { display: grid; justify-items: center; gap: 2px; }
+    .day-slot small { color: #98a5b7; font-size: 7px; line-height: 1; font-variant-numeric: tabular-nums; }
+    .day-icons .weather-emoji { width: 22px; font-size: 13px; line-height: 1; text-align: center; }
+    .day-icons .weather-emoji.daily-icon { grid-column: 1 / -1; justify-self: center; font-size: 17px; }
     .rain { color: #8c9bb0; font-size: 9px; text-align: right; }
     .rain.wet { color: #5989de; }
     .temp-low, .temp-high { font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
     .temp-low { color: #a6b0bd; text-align: right; }
     .temp-high { color: #536078; }
-    .range { position: relative; height: 5px; overflow: hidden; border-radius: 99px; background: linear-gradient(90deg, #c9dcff, #ffd391); }
+    .range-track { position: relative; width: 100%; height: 12px; overflow: visible; }
+    .range { position: absolute; top: 3px; height: 5px; overflow: hidden; border-radius: 99px; background: linear-gradient(90deg, #c9dcff, #ffd391); }
     .range::after { position: absolute; inset: 0; content: ""; border-radius: inherit; background: linear-gradient(90deg, #a4c4fa, #ffbc74); }
+    .range-current-marker { position: absolute; top: 0; z-index: 1; height: 12px; border-left: 2px solid #435ed5; }
+    .day-slot.past .weather-emoji { filter: grayscale(1); opacity: .34; }
+    .day-slot.past small { color: #b2bac6; }
     .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
     .metric { min-height: 94px; padding: 12px; border: 1px solid #edf0f4; border-radius: 15px; background: #fbfcfe; }
     .metric-top { display: flex; align-items: center; justify-content: space-between; gap: 5px; color: #8492a5; font-size: 9px; font-weight: 700; }
     .metric-top span:last-child { font-size: 15px; }
     .metric strong { display: block; margin-top: 11px; color: #26354c; font-size: 19px; font-weight: 760; letter-spacing: -.04em; }
+    #wind { font-size: 14px; white-space: nowrap; }
     .metric small { display: block; margin-top: 2px; color: #9aa6b5; font-size: 9px; }
     .sun-card { overflow: hidden; }
     .sun-visual { position: relative; height: 86px; margin: 2px 0 7px; overflow: hidden; border-radius: 13px; background: linear-gradient(180deg, #eef3ff, #fff6e7); }
@@ -121,33 +151,104 @@
     .loading { opacity: .58; pointer-events: none; }
     .skeleton { animation: pulse 1.2s ease-in-out infinite alternate; }
     @keyframes pulse { to { opacity: .45; } }
+    .radar-view { display: block; min-height: 0; }
+    .radar-panel { padding: 16px; border: 1px solid var(--line); border-radius: 19px; background: #fff; box-shadow: var(--shadow); text-align: left; }
+    .radar-panel > div { width: 100%; }
+    .radar-symbol { display: none; }
+    .radar-panel h1 { margin: 0; font-size: 15px; }
+    .radar-panel p { max-width: none; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .radar-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 100%; margin: 0 0 10px; }
+    .radar-toolbar-actions { display: flex; flex: 0 0 auto; gap: 7px; }
+    .radar-toolbar p { max-width: none; margin: 0; text-align: left; }
+    .radar-refresh, .radar-fullscreen { flex: 0 0 auto; min-height: 44px; padding: 0 13px; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); background: white; font-weight: 700; }
+    .radar-fullscreen { padding: 0 12px; font-size: 12px; }
+    #radar-map .leaflet-control-zoom a { width: 40px; height: 40px; line-height: 40px; }
+    .radar-map { width: 100%; height: 330px; min-height: 0; overflow: hidden; border-radius: 13px; background: #e8eef5; text-align: left; }
+    .radar-legend { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin: 7px 0 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: 11px; background: #fff; text-align: left; }
+    .radar-legend-title { margin-right: 3px; color: var(--muted); font-size: 11px; font-weight: 750; }
+    .radar-legend-item { display: inline-flex; align-items: center; gap: 5px; color: var(--ink); font-size: 10px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .radar-legend-swatch { width: 13px; height: 13px; border: 1px solid #8795a466; border-radius: 4px; }
+    .radar-timeline { margin: 8px 0 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; text-align: left; }
+    .radar-time-controls { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 0 12px; }
+    .radar-play { display: grid; width: 42px; height: 42px; flex: 0 0 auto; place-items: center; border: 0; border-radius: 12px; color: #fff; background: #5268e8; font-size: 20px; font-weight: 750; }
+    .radar-time-label { display: none; }
+    .radar-range-wrap { position: relative; width: 100%; min-width: 0; padding: 18px 7px 0; }
+    .radar-current-time { position: absolute; top: 0; left: 16.6667%; transform: translateX(-50%); color: #5268e8; font-size: 10px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .radar-range { display: block; width: 100%; height: 24px; margin: 0; appearance: none; background: transparent; touch-action: pan-y; }
+    .radar-range::-webkit-slider-runnable-track { height: 4px; border-radius: 99px; background: #e2e7ef; }
+    .radar-range::-moz-range-track { height: 4px; border-radius: 99px; background: #e2e7ef; }
+    .radar-range::-webkit-slider-thumb { width: 16px; height: 16px; margin-top: -6px; appearance: none; border: 0; border-radius: 50%; background: #5268e8; }
+    .radar-range::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: #5268e8; }
+    .radar-range-labels { position: relative; height: 30px; color: var(--muted); font-size: 9px; font-variant-numeric: tabular-nums; }
+    .radar-range-labels span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+    .radar-range-labels .lower { top: 13px; }
+    .radar-range-labels span:first-child { left: 0; transform: none; }
+    .radar-range-labels span:last-child { transform: translateX(-100%); }
+    .radar-range-labels .radar-now-label { color: #5268e8; font-weight: 800; }
+    .radar-ruler-marks { position: relative; height: 8px; margin: -9px 0 0; pointer-events: none; }
+    .radar-ruler-mark { position: absolute; top: 0; height: 6px; border-left: 1px solid #9aa8bd; }
+    .radar-ruler-mark.is-now { height: 8px; border-color: #5268e8; border-left-width: 2px; }
+    #radar-map .leaflet-baseMapPane-pane { filter: grayscale(.72) brightness(1.07); opacity: .78; }
+    body.radar-fullscreen-open { overflow: hidden; }
+    .radar-view.is-fullscreen { position: fixed; z-index: 1000; inset: 0; display: flex; overflow: auto; padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); background: #f3f5f8; }
+    .radar-view.is-fullscreen .radar-panel { display: flex; width: 100%; min-height: 100%; box-sizing: border-box; }
+    .radar-view.is-fullscreen .radar-panel > div { display: flex; flex: 1; flex-direction: column; min-height: calc(100vh - 20px); min-height: calc(100dvh - 20px); }
+    .radar-view.is-fullscreen .radar-map { flex: 1; height: auto; min-height: 220px; }
+    .radar-link { display: inline-flex; min-height: 32px; align-items: center; justify-content: center; margin-top: 6px; padding: 0 11px; border-radius: 10px; color: #315b93; background: #edf3fb; font-size: 10px; font-weight: 700; text-decoration: none; }
+    .hour-wind { display: flex; align-items: center; gap: 3px; color: #74859c; font-size: 9px; white-space: nowrap; }
+    .hour-wind b { color: #52647d; font-size: 9px; }
+    .hour-wind-arrow { display: inline-block; color: #5480bd; font-size: 12px; }
     @media (max-width: 800px) {
       .app { width: min(100% - 30px, 650px); padding-top: 22px; }
       .topbar { align-items: flex-start; flex-wrap: wrap; gap: 16px; }
       .search-area { order: 2; width: 100%; }
-      .main-grid { grid-template-columns: 1fr; }
-      .right-column { grid-template-columns: 1.2fr 1fr; align-items: start; }
-      .sun-card { grid-column: 1 / -1; }
+      .current-layout { grid-template-columns: 1fr; }
+      .current-side { grid-template-columns: 1fr 1fr; align-items: start; }
     }
     @media (max-width: 520px) {
-      .app { width: calc(100% - 22px); padding-top: 16px; }
-      .topbar { margin-bottom: 20px; }
+      .app { width: calc(100% - 22px); padding-top: 8px; padding-bottom: 18px; }
+      .topbar { align-items: center; margin-bottom: 8px; gap: 8px; }
       .brand-mark { width: 38px; height: 38px; }
+      .top-actions { margin-left: auto; }
       .search-area { gap: 6px; }
       .search-submit { min-width: 58px; padding: 0 10px; }
-      .suggestions { right: 48px; }
-      .status { margin-top: -10px; }
-      .quick { flex-wrap: wrap; margin-bottom: 12px; }
-      .hero { min-height: 265px; padding: 21px; border-radius: 19px; }
+      .suggestions { right: 64px; }
+      .quick { display: flex; gap: 6px; margin-bottom: 7px; }
+      .hero { min-height: 210px; padding: 16px; border-radius: 17px; }
       .hero-icon { width: 72px; height: 72px; margin-right: 0; border-radius: 23px; font-size: 43px; }
       .temperature { font-size: 72px; }
       .hero-bottom { margin-top: 18px; }
       .card { padding: 15px; border-radius: 17px; }
-      .right-column { grid-template-columns: 1fr; }
-      .sun-card { grid-column: auto; }
+      .current-layout { gap: 9px; }
+      .current-side { grid-template-columns: 1fr; gap: 9px; }
       .metrics { gap: 7px; }
       .metric { min-height: 85px; padding: 10px; }
       .footer { flex-direction: column; gap: 5px; }
+      .status { margin: 0 0 10px; }
+      .quick { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 3px; white-space: nowrap; }
+      .quick span { flex: 0 0 auto; }
+      .quick button { flex: 0 0 auto; min-height: 44px; padding: 8px 11px; }
+      .forecast-stack { gap: 9px; }
+      .section-head { margin-bottom: 9px; }
+      .card { padding: 12px; border-radius: 15px; }
+      .hourly { grid-auto-columns: 58px; gap: 5px; }
+      .hour { gap: 7px; padding: 7px 3px; }
+      .radar-panel { padding: 10px; border-radius: 15px; }
+      .radar-map { height: clamp(170px, 27vh, 230px); min-height: 170px; }
+      .radar-legend { gap: 5px 7px; padding: 6px 7px; }
+      .radar-legend-item { font-size: 8px; }
+      .radar-legend-swatch { width: 10px; height: 10px; }
+      .radar-timeline { padding: 8px; }
+      .radar-time-controls { grid-template-columns: 44px minmax(0, 1fr); gap: 0 7px; }
+      .radar-play { width: 44px; height: 44px; border-radius: 12px; font-size: 18px; }
+      .radar-time-label { display: none; }
+      .radar-range-labels { font-size: 8px; }
+      .day { grid-template-columns: 83px 92px 34px minmax(10px, 1fr) 48px; gap: 3px; }
+      .day-icons { grid-template-columns: repeat(4, 20px); gap: 1px; }
+      .day-icons .weather-emoji { width: 20px; font-size: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
   </style>
 </head>
@@ -158,74 +259,77 @@
         <div class="brand-mark" aria-hidden="true">☀️</div>
         <div><p class="brand-name">そら</p><p class="brand-note">your daily forecast</p></div>
       </div>
-      <form class="search-area" id="search-form" role="search">
-        <label class="searchbox" for="city-search"><span class="search-icon" aria-hidden="true">⌕</span><input id="city-search" type="search" placeholder="都市名を検索　例：札幌、大阪" autocomplete="off" aria-label="都市名を検索"></label>
-        <button class="search-submit" type="submit">検索</button>
+      <div class="top-actions">
+        <button class="icon-button" id="refresh" type="button" aria-label="天気を更新" title="更新">↻</button>
         <button class="icon-button" id="locate" type="button" aria-label="現在地の天気" title="現在地を使う">◎</button>
-        <div class="suggestions" id="suggestions" role="listbox" aria-label="検索結果"></div>
+      </div>
+      <form class="search-area" id="search-form" role="search">
+        <label class="searchbox" for="city-search"><span class="search-icon" aria-hidden="true">⌕</span><input id="city-search" type="search" placeholder="都市名を入力　例：長岡京、大阪" autocomplete="off" aria-label="都市名を検索" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestions" aria-haspopup="listbox"></label>
+        <button class="search-submit" type="submit">検索</button>
+        <div class="suggestions" id="suggestions" role="listbox" aria-label="検索候補"></div>
       </form>
     </header>
+    <p class="place-current" aria-live="polite"><span aria-hidden="true">●</span><strong id="place-label">東京</strong></p>
     <p class="status" id="status" role="status" aria-live="polite">東京の天気を読み込んでいます…</p>
-    <nav class="quick" aria-label="人気の都市"><span>すぐ見る</span><button type="button" data-city="東京">東京</button><button type="button" data-city="大阪">大阪</button><button type="button" data-city="札幌">札幌</button><button type="button" data-city="福岡">福岡</button><button type="button" data-city="那覇">那覇</button></nav>
+    <nav class="quick" aria-label="場所"><span>場所</span><button type="button" id="location-current">現在地</button><div class="registered-locations" id="registered-locations"></div><button type="button" id="register-place-button">＋ 場所を登録</button></nav>
+    <form class="register-place-form" id="register-place-form" hidden><label for="register-place-name">表示名</label><input id="register-place-name" maxlength="24" placeholder="例：自宅・職場"><button type="submit">登録</button><button type="button" id="cancel-register-place">キャンセル</button></form>
 
-    <div class="main-grid" id="weather-content">
-      <div class="left-column">
-        <section class="hero" aria-label="現在の天気">
-          <div class="hero-content">
-            <div class="hero-head">
-              <div>
-                <div class="location-label"><span>●</span><span id="country">日本</span></div>
-                <h1 id="place">東京</h1>
-                <p id="updated">現在の天気</p>
+    <div class="forecast-stack" id="weather-content">
+      <section class="card" id="hourly-panel">
+        <div class="section-head"><h2>1時間天気</h2><span>向こう24時間</span></div>
+        <div class="hourly" id="hourly" aria-label="時間ごとの天気"></div>
+      </section>
+
+      <section class="radar-view" id="radar-view" aria-labelledby="radar-title">
+        <div class="radar-panel">
+          <div>
+            <div class="radar-toolbar"><h1 id="radar-title">雨雲レーダー</h1><div class="radar-toolbar-actions"><button class="radar-fullscreen" id="radar-fullscreen" type="button" aria-pressed="false">全画面表示</button><button class="radar-refresh" id="radar-refresh" type="button">更新</button></div></div>
+            <p id="radar-status" role="status" aria-live="polite">地図を読み込んでいます。</p>
+            <div class="radar-map" id="radar-map" aria-label="選択した場所の雨雲レーダー地図"></div>
+            <div class="radar-legend" aria-label="降水強度の凡例">
+              <span class="radar-legend-title" id="radar-legend-title">降水強度 mm/h</span>
+              <span class="radar-legend-item"><i class="radar-legend-swatch" style="background:#b40068"></i>80以上</span>
+              <span class="radar-legend-item"><i class="radar-legend-swatch" style="background:#ff2800"></i>50–80</span>
+              <span class="radar-legend-item"><i class="radar-legend-swatch" style="background:#ff9900"></i>30–50</span>
+              <span class="radar-legend-item"><i class="radar-legend-swatch" style="background:#faf500"></i>20–30</span>
+              <span class="radar-legend-item"><i class="radar-legend-swatch" style="background:#0041ff"></i>10–20</span>
+              <span class="radar-legend-item"><i class="radar-legend-swatch" style="background:#218cff"></i>5–10</span>
+              <span class="radar-legend-item"><i class="radar-legend-swatch" style="background:#a0d2ff"></i>1–5</span>
+              <span class="radar-legend-item"><i class="radar-legend-swatch" style="background:#f2f2ff"></i>0–1</span>
+            </div>
+            <div class="radar-timeline" aria-label="雨雲の時間移動">
+              <div class="radar-time-controls">
+                <button class="radar-play" id="radar-play" type="button" aria-label="雨雲の動きを再生" disabled>▶</button>
+                <span class="radar-time-label" id="radar-time-label">時刻データを読み込み中</span>
+                <div class="radar-range-wrap">
+                  <span class="radar-current-time" id="radar-current-time">--:--</span>
+                  <input class="radar-range" id="radar-range" type="range" min="-180" max="900" value="0" step="1" aria-label="雨雲の表示時刻" disabled>
+                  <div class="radar-ruler-marks" aria-hidden="true">
+                    <i class="radar-ruler-mark" style="left:0%"></i><i class="radar-ruler-mark is-now" style="left:16.6667%"></i><i class="radar-ruler-mark" style="left:22.2222%"></i><i class="radar-ruler-mark" style="left:33.3333%"></i><i class="radar-ruler-mark" style="left:50%"></i><i class="radar-ruler-mark" style="left:66.6667%"></i><i class="radar-ruler-mark" style="left:83.3333%"></i><i class="radar-ruler-mark" style="left:100%"></i>
+                  </div>
+                  <div class="radar-range-labels" aria-hidden="true"><span style="left:0%">過去3時間</span><span class="radar-now-label" style="left:16.6667%">現在</span><span class="lower" style="left:22.2222%">1時間後</span><span style="left:33.3333%">3時間後</span><span class="lower" style="left:50%">6時間後</span><span style="left:66.6667%">9時間後</span><span class="lower" style="left:83.3333%">12時間後</span><span style="left:100%">15時間後</span></div>
+                </div>
               </div>
-              <div class="hero-icon" id="current-icon" aria-hidden="true">☀️</div>
             </div>
-            <div class="temperature-row">
-              <div class="temperature"><span id="temperature">--</span><sup id="unit-mark">°C</sup></div>
-              <div class="condition"><strong id="condition">読み込み中</strong><span>体感 <b id="feels-like">--°</b></span></div>
-            </div>
-            <div class="hero-bottom">
-              <span>最高 <b id="today-high">--°</b></span><span>最低 <b id="today-low">--°</b></span><span>降水確率 <b id="today-rain">--%</b></span>
-            </div>
+            <p><a class="radar-link" id="radar-link" href="https://www.jma.go.jp/bosai/nowc/" target="_blank" rel="noopener noreferrer">地図が表示されない場合は気象庁の画面を別タブで開く ↗</a></p>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section class="card">
-          <div class="section-head"><h2>これからの天気</h2><span>Next 24 hours</span></div>
-          <div class="hourly" id="hourly" aria-label="時間ごとの天気"></div>
-        </section>
-
-        <section class="card">
-          <div class="section-head"><h2>週間予報</h2><span>7 day forecast</span></div>
-          <div class="week" id="week" aria-label="7日間の天気"></div>
-        </section>
-      </div>
-
-      <aside class="right-column">
-        <section class="card">
-          <div class="section-head"><h2>空模様メモ</h2><button class="unit-button" id="unit-toggle" type="button" aria-label="温度単位を切り替える">°C</button></div>
-          <div class="metrics">
-            <div class="metric"><div class="metric-top"><span>体感温度</span><span>◌</span></div><strong id="metric-feels">--°</strong><small>Feels like</small></div>
-            <div class="metric"><div class="metric-top"><span>湿度</span><span>◉</span></div><strong id="humidity">--%</strong><small>Humidity</small></div>
-            <div class="metric"><div class="metric-top"><span>風</span><span>↗</span></div><strong id="wind">--</strong><small>km/h</small></div>
-            <div class="metric"><div class="metric-top"><span>降水量</span><span>⌁</span></div><strong id="precipitation">--</strong><small>直近の1時間</small></div>
-          </div>
-        </section>
-        <section class="card sun-card">
-          <div class="section-head"><h2>太陽の時間</h2><span id="sun-date">Today</span></div>
-          <div class="sun-visual" aria-hidden="true"><div class="sun-arc"></div><div class="sun-dot"></div></div>
-          <div class="sun-times"><div>日の出<strong id="sunrise">--:--</strong></div><div>日の入り<strong id="sunset">--:--</strong></div></div>
-        </section>
-      </aside>
+      <section class="card" id="weekly-panel">
+        <div class="section-head"><h2>2週間天気</h2><div class="forecast-tabs" role="group" aria-label="週間予報の日数"><button type="button" data-forecast-days="7" aria-pressed="true">1週間</button><button type="button" data-forecast-days="14" aria-pressed="false">2週間</button></div></div>
+        <div class="week" id="week" aria-label="7日間の天気"></div>
+        <p class="forecast-note" id="forecast-note">今日から1週間の日別予報</p>
+      </section>
+      <footer class="footer"><span>予報は参考情報です。最新の防災情報は自治体・気象機関をご確認ください。</span><span>気温・天気・風：<a href="https://open-meteo.com/en/docs/jma-api" target="_blank" rel="noreferrer">JMA MSM/GSMモデル（Open-Meteo経由）</a> · 降水確率・日別予報：<a href="https://open-meteo.com/en/docs" target="_blank" rel="noreferrer">Open-Meteo Forecast</a> · 地域名：<a href="https://geoapi.heartrails.com/" target="_blank" rel="noreferrer">HeartRails Geo API</a>（出典：<a href="https://nlftp.mlit.go.jp/isj/" target="_blank" rel="noreferrer">「位置参照情報ダウンロードサービス」（国土交通省）を加工して作成</a>）</span></footer>
     </div>
-    <footer class="footer"><span>予報は参考情報です。最新の防災情報は自治体・気象機関をご確認ください。</span><span>Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a></span></footer>
   </main>
 
   <script>
     (() => {
       "use strict";
       const $ = (id) => document.getElementById(id);
-      const state = { place: { name: "東京", admin1: "東京都", country: "日本", latitude: 35.6762, longitude: 139.6503 }, data: null, fahrenheit: false, controller: null };
+      const state = { place: { name: "東京", admin1: "東京都", country: "日本", latitude: 35.6762, longitude: 139.6503 }, data: null, fahrenheit: false, controller: null, savedAt: null, forecastDays: 7 };
       const WDAY = ["日", "月", "火", "水", "木", "金", "土"];
       const weatherInfo = (code, isDay = 1) => {
         if (code === 0) return { text: isDay ? "快晴" : "晴れ", icon: isDay ? "☀️" : "🌙" };
@@ -242,16 +346,317 @@
       };
       const celsius = (value) => state.fahrenheit ? value * 9 / 5 + 32 : value;
       const degrees = (value) => `${Math.round(celsius(value))}°`;
+      const compassDirection = (degreesValue) => {
+        if (!Number.isFinite(Number(degreesValue))) return "—";
+        return ["北", "北北東", "北東", "東北東", "東", "東南東", "南東", "南南東", "南", "南南西", "南西", "西南西", "西", "西北西", "北西", "北北西"][Math.round((((Number(degreesValue) % 360) + 360) % 360) / 22.5) % 16];
+      };
       const localTime = (value) => value ? value.slice(11, 16) : "--:--";
       const localDate = (value) => {
         const [year, month, day] = value.split("T")[0].split("-").map(Number);
         return new Date(year, month - 1, day, 12).getDay();
       };
+      function radarUrl(place) {
+        const latitude = Number(place.latitude), longitude = Number(place.longitude);
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return "https://www.jma.go.jp/bosai/nowc/";
+        return `https://www.jma.go.jp/bosai/nowc/#zoom:11/lat:${latitude}/lon:${longitude}/colordepth:normal/elements:hrpns`;
+      }
+      let radarMap = null;
+      let radarLayer = null;
+      let radarMarker = null;
+      let radarFrames = [];
+      let radarNowIndex = 0;
+      let radarSelectedIndex = 0;
+      let radarPlaybackTimer = null;
+      let radarLoadPromise = null;
+      let radarIsLoading = false;
+      const RADAR_MIN_ZOOM = 4;
+      const RADAR_INITIAL_ZOOM = 11;
+      function radarTileUrl(frame) {
+        if (frame.source === "rasrf") {
+          return `https://www.jma.go.jp/bosai/jmatile/data/rasrf/${frame.basetime}/${frame.member || "none"}/${frame.validtime}/surf/rasrf/{z}/{x}/{y}.png`;
+        }
+        return `https://www.jma.go.jp/bosai/jmatile/data/nowc/${frame.basetime}/none/${frame.validtime}/surf/hrpns/{z}/{x}/{y}.png`;
+      }
+      function radarDate(stamp) {
+        return new Date(Date.UTC(Number(stamp.slice(0, 4)), Number(stamp.slice(4, 6)) - 1, Number(stamp.slice(6, 8)), Number(stamp.slice(8, 10)), Number(stamp.slice(10, 12))));
+      }
+      function radarTimeLabel(stamp) {
+        return new Intl.DateTimeFormat("ja-JP", { timeZone: "Asia/Tokyo", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).format(radarDate(stamp));
+      }
+      function showRadarFrame(index) {
+        if (!radarFrames.length || !radarMap) return;
+        const frame = radarFrames[index];
+        radarSelectedIndex = index;
+        if (radarLayer) radarMap.removeLayer(radarLayer);
+        radarLayer = L.tileLayer(radarTileUrl(frame), {
+          pane: "rainPane",
+          opacity: 0.9,
+          minZoom: RADAR_MIN_ZOOM,
+          maxNativeZoom: 10,
+          maxZoom: 18,
+          attribution: frame.source === "rasrf"
+            ? '<a href="https://www.jma.go.jp/bosai/kaikotan/" target="_blank" rel="noreferrer">気象庁 降水短時間予報</a>'
+            : '<a href="https://www.jma.go.jp/bosai/nowc/" target="_blank" rel="noreferrer">気象庁 高解像度降水ナウキャスト</a>'
+        }).addTo(radarMap);
+        const delta = Math.round((radarDate(frame.validtime) - radarDate(radarFrames[radarNowIndex].validtime)) / 60000);
+        $("radar-range").value = String(delta);
+        const relation = delta < 0
+          ? `${Math.abs(delta) < 60 ? `${Math.abs(delta)}分` : `${(Math.abs(delta) / 60).toFixed(1)}時間`}前`
+          : delta > 60
+            ? `${(delta / 60).toFixed(delta % 60 ? 1 : 0)}時間後 · 1時間降水量予報`
+            : delta > 0 ? `${delta}分後 · 雨雲の動き予測` : "現在（実況）";
+        $("radar-time-label").textContent = `${radarTimeLabel(frame.validtime)} · ${relation}`;
+        const marker = $("radar-current-time");
+        const selectedDate = radarDate(frame.validtime);
+        marker.textContent = new Intl.DateTimeFormat("ja-JP", { timeZone: "Asia/Tokyo", hour: "numeric", minute: "2-digit", hour12: false }).format(selectedDate);
+        marker.style.left = `${Math.max(0, Math.min(100, ((delta + 180) / 1080) * 100))}%`;
+        $("radar-range").setAttribute("aria-valuetext", `${radarTimeLabel(frame.validtime)}、${relation}`);
+        const legendTitle = $("radar-legend-title");
+        if (legendTitle) legendTitle.textContent = frame.source === "rasrf" ? "1時間降水量 mm" : "降水強度 mm/h";
+      }
+      function stopRadarPlayback() {
+        if (radarPlaybackTimer) clearInterval(radarPlaybackTimer);
+        radarPlaybackTimer = null;
+        $("radar-play").textContent = "▶";
+        $("radar-play").setAttribute("aria-label", "雨雲の動きを再生");
+      }
+      function startRadarPlayback() {
+        if (!radarFrames.length) return;
+        if (radarPlaybackTimer) { stopRadarPlayback(); return; }
+        if (radarSelectedIndex >= radarFrames.length - 1) showRadarFrame(radarNowIndex);
+        $("radar-play").textContent = "Ⅱ";
+        $("radar-play").setAttribute("aria-label", "雨雲の動きを停止");
+        showRadarFrame(radarSelectedIndex);
+        radarPlaybackTimer = setInterval(() => {
+          const nextIndex = radarSelectedIndex + 1;
+          if (nextIndex >= radarFrames.length) { stopRadarPlayback(); return; }
+          showRadarFrame(nextIndex);
+        }, 700);
+      }
+      function loadLeaflet() {
+        if (window.L) return Promise.resolve();
+        if (radarLoadPromise) return radarLoadPromise;
+        radarLoadPromise = new Promise((resolve, reject) => {
+          if (!document.querySelector('link[data-leaflet]')) {
+            const css = document.createElement("link");
+            css.rel = "stylesheet";
+            css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+            css.dataset.leaflet = "true";
+            document.head.append(css);
+          }
+          const script = document.createElement("script");
+          script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+          script.onload = resolve;
+          script.onerror = () => reject(new Error("地図ライブラリを読み込めませんでした"));
+          document.head.append(script);
+        }).catch((error) => { radarLoadPromise = null; throw error; });
+        return radarLoadPromise;
+      }
+      async function loadRadar(forceRefresh = false) {
+        if (radarIsLoading) return;
+        radarIsLoading = true;
+        stopRadarPlayback();
+        const status = $("radar-status");
+        status.textContent = "雨雲地図を読み込んでいます…";
+        $("radar-refresh").disabled = true;
+        try {
+          await loadLeaflet();
+          const cache = forceRefresh ? "no-store" : "default";
+          const [pastResponse, futureResponse, shortRangeResponse] = await Promise.all([
+            fetch("https://www.jma.go.jp/bosai/jmatile/data/nowc/targetTimes_N1.json", { cache }),
+            fetch("https://www.jma.go.jp/bosai/jmatile/data/nowc/targetTimes_N2.json", { cache }),
+            fetch("https://www.jma.go.jp/bosai/jmatile/data/rasrf/targetTimes.json", { cache }).catch(() => null)
+          ]);
+          if (!pastResponse.ok || !futureResponse.ok) throw new Error("時刻データを取得できませんでした");
+          const pastTargets = await pastResponse.json();
+          const futureTargets = await futureResponse.json();
+          const shortRangeTargets = shortRangeResponse?.ok ? await shortRangeResponse.json() : [];
+          const pastFrames = pastTargets.filter((item) => item.elements?.includes("hrpns"));
+          const futureFrames = futureTargets.filter((item) => item.elements?.includes("hrpns"));
+          const latest = pastFrames.reduce((newest, frame) => !newest || frame.validtime > newest.validtime ? frame : newest, null);
+          if (!latest) throw new Error("最新の雨雲データが見つかりませんでした");
+          const nowTime = radarDate(latest.validtime);
+          const longRangeFrames = shortRangeTargets
+            .filter((item) => item.elements?.includes("rasrf"))
+            .filter((item) => {
+              const minutesAhead = (radarDate(item.validtime) - nowTime) / 60000;
+              return minutesAhead > 60 && minutesAhead <= 15 * 60;
+            })
+            .map((item) => ({ ...item, source: "rasrf" }));
+          const frameByTime = new Map([
+            ...[...pastFrames, ...futureFrames].map((item) => [item.validtime, { ...item, source: "nowc" }]),
+            ...longRangeFrames.map((item) => [item.validtime, item])
+          ]);
+          radarFrames = [...frameByTime.values()].sort((a, b) => a.validtime.localeCompare(b.validtime));
+          radarNowIndex = radarFrames.findIndex((item) => item.validtime === latest.validtime);
+          if (radarNowIndex < 0) throw new Error("現在時刻の雨雲データが見つかりませんでした");
+          $("radar-range").min = "-180";
+          $("radar-range").max = "900";
+          $("radar-range").value = "0";
+          $("radar-range").disabled = false;
+          $("radar-play").disabled = false;
+          const place = state.place;
+          const latitude = Number(place.latitude), longitude = Number(place.longitude);
+          const center = Number.isFinite(latitude) && Number.isFinite(longitude) ? [latitude, longitude] : [35.6762, 139.6503];
+          if (!radarMap) {
+            radarMap = L.map("radar-map", { center, zoom: RADAR_INITIAL_ZOOM, minZoom: RADAR_MIN_ZOOM, zoomControl: true, attributionControl: true });
+            const baseMapPane = radarMap.createPane("baseMapPane");
+            baseMapPane.style.zIndex = "200";
+            radarMap.createPane("rainPane").style.zIndex = "450";
+            L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
+              pane: "baseMapPane",
+              minZoom: RADAR_MIN_ZOOM,
+              maxZoom: 18,
+              attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noreferrer">地理院タイル</a>'
+            }).addTo(radarMap);
+          } else {
+            radarMap.setView(center, RADAR_INITIAL_ZOOM);
+          }
+          if (!radarMarker) {
+            radarMarker = L.circleMarker(center, { radius: 7, color: "#fff", weight: 3, fillColor: "#5268e8", fillOpacity: 1 }).addTo(radarMap);
+          }
+          radarMarker.setLatLng(center).bindTooltip(place.name);
+          if (radarLayer) radarMap.removeLayer(radarLayer);
+          showRadarFrame(radarNowIndex);
+          const availableFutureMinutes = Math.round((radarDate(radarFrames[radarFrames.length - 1].validtime) - nowTime) / 60000);
+          const availableFutureLabel = `${(availableFutureMinutes / 60).toFixed(availableFutureMinutes % 60 ? 1 : 0)}時間後`;
+          status.textContent = longRangeFrames.length
+            ? `${place.name} · 1時間降水量予報は${availableFutureLabel}まで`
+            : `${place.name} · 実況〜1時間先まで（長時間予報を取得できませんでした）`;
+          stopRadarPlayback();
+          requestAnimationFrame(() => radarMap.invalidateSize());
+        } catch (error) {
+          status.textContent = "雨雲地図を表示できませんでした。気象庁の画面を別タブでお試しください。";
+        } finally {
+          radarIsLoading = false;
+          $("radar-refresh").disabled = false;
+        }
+      }
       const setStatus = (message = "", error = false) => {
         $("status").textContent = message;
         $("status").classList.toggle("error", error);
       };
       const placeLabel = (place) => [place.name, place.admin1, place.country].filter((v, i, a) => v && a.indexOf(v) === i).join(" · ");
+      const cityPresets = new Map([
+        ["東京", { name: "東京", admin1: "東京都", country: "日本", latitude: 35.6762, longitude: 139.6503 }],
+        ["横浜", { name: "横浜市", admin1: "神奈川県", country: "日本", latitude: 35.4437, longitude: 139.6380 }],
+        ["横浜市", { name: "横浜市", admin1: "神奈川県", country: "日本", latitude: 35.4437, longitude: 139.6380 }],
+        ["大阪", { name: "大阪市", admin1: "大阪府", country: "日本", latitude: 34.6937, longitude: 135.5023 }],
+        ["大阪市", { name: "大阪市", admin1: "大阪府", country: "日本", latitude: 34.6937, longitude: 135.5023 }],
+        ["名古屋", { name: "名古屋市", admin1: "愛知県", country: "日本", latitude: 35.1815, longitude: 136.9066 }],
+        ["名古屋市", { name: "名古屋市", admin1: "愛知県", country: "日本", latitude: 35.1815, longitude: 136.9066 }],
+        ["京都", { name: "京都市", admin1: "京都府", country: "日本", latitude: 35.0116, longitude: 135.7681 }],
+        ["京都市", { name: "京都市", admin1: "京都府", country: "日本", latitude: 35.0116, longitude: 135.7681 }],
+        ["神戸", { name: "神戸市", admin1: "兵庫県", country: "日本", latitude: 34.6901, longitude: 135.1956 }],
+        ["神戸市", { name: "神戸市", admin1: "兵庫県", country: "日本", latitude: 34.6901, longitude: 135.1956 }],
+        ["仙台", { name: "仙台市", admin1: "宮城県", country: "日本", latitude: 38.2682, longitude: 140.8694 }],
+        ["仙台市", { name: "仙台市", admin1: "宮城県", country: "日本", latitude: 38.2682, longitude: 140.8694 }],
+        ["広島", { name: "広島市", admin1: "広島県", country: "日本", latitude: 34.3853, longitude: 132.4553 }],
+        ["広島市", { name: "広島市", admin1: "広島県", country: "日本", latitude: 34.3853, longitude: 132.4553 }],
+        ["札幌", { name: "札幌市", admin1: "北海道", country: "日本", latitude: 43.0618, longitude: 141.3545 }],
+        ["札幌市", { name: "札幌市", admin1: "北海道", country: "日本", latitude: 43.0618, longitude: 141.3545 }],
+        ["福岡", { name: "福岡市", admin1: "福岡県", country: "日本", latitude: 33.5902, longitude: 130.4017 }],
+        ["福岡市", { name: "福岡市", admin1: "福岡県", country: "日本", latitude: 33.5902, longitude: 130.4017 }],
+        ["那覇", { name: "那覇市", admin1: "沖縄県", country: "日本", latitude: 26.2124, longitude: 127.6809 }],
+        ["那覇市", { name: "那覇市", admin1: "沖縄県", country: "日本", latitude: 26.2124, longitude: 127.6809 }],
+        ["長岡京", { name: "長岡京市", admin1: "京都府", country: "日本", latitude: 34.9266, longitude: 135.6956 }],
+        ["長岡京市", { name: "長岡京市", admin1: "京都府", country: "日本", latitude: 34.9266, longitude: 135.6956 }]
+      ]);
+      const setPlaceName = (place) => { $("place-label").textContent = place?.name || "場所を選択"; };
+      const savedPlacesKey = "sora-saved-places";
+      const samePlace = (left, right) => left && right
+        && Number(left.latitude).toFixed(3) === Number(right.latitude).toFixed(3)
+        && Number(left.longitude).toFixed(3) === Number(right.longitude).toFixed(3);
+      function readSavedPlaces() {
+        try {
+          const places = JSON.parse(localStorage.getItem(savedPlacesKey));
+          return Array.isArray(places) ? places.filter(item => item?.label && item?.place?.name
+            && Number.isFinite(Number(item.place.latitude)) && Number.isFinite(Number(item.place.longitude))).slice(0, 6) : [];
+        } catch { return []; }
+      }
+      let savedPlaces = readSavedPlaces();
+      function renderSavedPlaces() {
+        const list = $("registered-locations");
+        list.replaceChildren();
+        savedPlaces.forEach((item, index) => {
+          const group = document.createElement("span");
+          group.className = "registered-place";
+          const select = document.createElement("button");
+          select.type = "button";
+          select.textContent = `登録${index + 1} · ${item.label}`;
+          select.setAttribute("aria-pressed", String(samePlace(state.place, item.place)));
+          select.addEventListener("click", () => loadWeather(item.place));
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "remove-place";
+          remove.textContent = "×";
+          remove.setAttribute("aria-label", `${item.label}の登録を解除`);
+          remove.addEventListener("click", () => {
+            savedPlaces = savedPlaces.filter(saved => saved.id !== item.id);
+            try { localStorage.setItem(savedPlacesKey, JSON.stringify(savedPlaces)); } catch { /* 画面上の操作は続けます */ }
+            renderSavedPlaces();
+          });
+          group.append(select, remove);
+          list.append(group);
+        });
+      }
+      renderSavedPlaces();
+      const cacheKey = (place) => `sora-weather-jma-${Number(place.latitude).toFixed(2)}-${Number(place.longitude).toFixed(2)}`;
+      const areaCacheKey = (place) => `sora-area-${Number(place.latitude).toFixed(2)}-${Number(place.longitude).toFixed(2)}`;
+      function readCache(place) {
+        try {
+          const cached = JSON.parse(localStorage.getItem(cacheKey(place)));
+          return cached?.data?.current && cached?.data?.hourly ? cached : null;
+        } catch { return null; }
+      }
+      function getJsonp(url, timeoutMs = 5000) {
+        return new Promise((resolve, reject) => {
+          const callbackName = `__soraGeo${Date.now()}${Math.floor(Math.random() * 100000)}`;
+          const script = document.createElement("script");
+          const timer = setTimeout(() => finish(new Error("Geocoding timeout")), timeoutMs);
+          const finish = (error, data) => {
+            clearTimeout(timer);
+            script.remove();
+            delete window[callbackName];
+            if (error) reject(error); else resolve(data);
+          };
+          window[callbackName] = (data) => finish(null, data);
+          script.onerror = () => finish(new Error("Geocoding failed"));
+          const requestUrl = new URL(url);
+          requestUrl.searchParams.set("jsonp", callbackName);
+          script.src = requestUrl.toString();
+          document.head.append(script);
+        });
+      }
+      async function resolveMunicipality(place) {
+        const key = areaCacheKey(place);
+        try {
+          const cached = JSON.parse(localStorage.getItem(key));
+          if (cached?.city) return cached;
+        } catch { /* キャッシュが使えない場合は検索します */ }
+        const query = new URLSearchParams({ method: "searchByGeoLocation", x: place.longitude, y: place.latitude });
+        const response = await getJsonp(`https://geoapi.heartrails.com/api/json?${query}`);
+        const result = response?.response?.location?.[0];
+        if (!result?.city) return null;
+        const area = { city: result.city, prefecture: result.prefecture || "" };
+        try { localStorage.setItem(key, JSON.stringify(area)); } catch { /* 表示は続行します */ }
+        return area;
+      }
+      async function nameCurrentLocation(place) {
+        try {
+          const area = await resolveMunicipality(place);
+          if (!area || cacheKey(state.place) !== cacheKey(place)) return;
+          state.place = { ...state.place, name: area.city, admin1: area.prefecture, country: "日本" };
+          setPlaceName(state.place);
+          renderSavedPlaces();
+          if (radarMarker) radarMarker.bindTooltip(area.city);
+          if (state.data) {
+            const updatedAt = state.savedAt ? new Intl.DateTimeFormat("ja-JP", { hour: "2-digit", minute: "2-digit" }).format(state.savedAt) : "--:--";
+            setStatus(`${area.city} · 更新 ${updatedAt} · 現在時刻 ${localTime(state.data.current.time)}`);
+          }
+          try { localStorage.setItem("sora-last-place", JSON.stringify(state.place)); } catch { /* 保存できなくても表示します */ }
+        } catch { /* 地名検索に失敗した場合も天気は表示できます */ }
+      }
       async function getJson(url, options = {}) {
         const response = await fetch(url, options);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -264,54 +669,74 @@
         state.controller = new AbortController();
         const signal = state.controller.signal;
         state.place = place;
-        $("place").textContent = place.name;
-        $("country").textContent = [place.admin1, place.country].filter((v, i, a) => v && a.indexOf(v) === i).join(" · ") || "現在地";
-        $("weather-content").classList.add("loading");
-        setStatus(`${place.name}の天気を取得しています…`);
+        setPlaceName(place);
+        renderSavedPlaces();
+        $("radar-link").href = radarUrl(place);
+        if (radarMap) {
+          const latitude = Number(place.latitude), longitude = Number(place.longitude);
+          if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+            radarMap.setView([latitude, longitude], RADAR_INITIAL_ZOOM);
+            if (radarMarker) radarMarker.setLatLng([latitude, longitude]).bindTooltip(place.name);
+          }
+        }
+        const cached = readCache(place);
+        if (cached) {
+          state.data = cached.data;
+          state.savedAt = cached.savedAt;
+          render(cached.data);
+          setStatus(`${place.name} · 保存済みの予報を表示しながら更新中`);
+        } else {
+          state.data = null;
+          setStatus(`${place.name}の天気を取得しています…`);
+        }
         const params = new URLSearchParams({
           latitude: place.latitude,
           longitude: place.longitude,
-          current: "temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m",
-          hourly: "temperature_2m,precipitation_probability,weather_code",
-          daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset",
+          current: "temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,wind_direction_10m",
+          hourly: "temperature_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m",
+          daily: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset",
           timezone: "auto",
           forecast_days: "7"
         });
+        const rainParams = new URLSearchParams({
+          latitude: place.latitude,
+          longitude: place.longitude,
+          hourly: "precipitation_probability",
+          daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
+          timezone: "auto",
+          forecast_days: "14"
+        });
+        const modelParams = new URLSearchParams(params);
+        modelParams.set("models", "jma_seamless");
         try {
-          const data = await getJson(`https://api.open-meteo.com/v1/forecast?${params}`, { signal });
+          const [data, rainData] = await Promise.all([
+            getJson(`https://api.open-meteo.com/v1/forecast?${modelParams}`, { signal }),
+            getJson(`https://api.open-meteo.com/v1/forecast?${rainParams}`, { signal }).catch(() => null)
+          ]);
           if (signal.aborted) return;
+          const rainByTime = new Map((rainData?.hourly?.time || []).map((time, index) => [time, rainData.hourly.precipitation_probability[index]]));
+          const rainByDay = new Map((rainData?.daily?.time || []).map((date, index) => [date, rainData.daily.precipitation_probability_max[index]]));
+          data.hourly.precipitation_probability = data.hourly.time.map((time) => rainByTime.get(time) ?? null);
+          data.daily.precipitation_probability_max = data.daily.time.map((date) => rainByDay.get(date) ?? null);
+          data.forecastDaily = rainData?.daily || null;
           state.data = data;
+          state.savedAt = Date.now();
           render(data);
-          setStatus(`最終更新 ${localTime(data.current.time)} · ${placeLabel(place)}`);
-          try { localStorage.setItem("sora-last-place", JSON.stringify(place)); } catch { /* 保存できなくても利用できます */ }
+          try { localStorage.setItem(cacheKey(place), JSON.stringify({ data, savedAt: state.savedAt })); } catch { /* 保存容量や設定に関わらず最新データは表示します */ }
+          const updatedAt = new Intl.DateTimeFormat("ja-JP", { hour: "2-digit", minute: "2-digit" }).format(state.savedAt);
+          const hasRainChance = data.hourly.precipitation_probability.some(Number.isFinite);
+          setStatus(`${place.name} · 更新 ${updatedAt} · 現在時刻 ${localTime(data.current.time)}${hasRainChance ? "" : " · 降水確率は取得できませんでした"}`, !hasRainChance);
+          const placeToSave = cacheKey(state.place) === cacheKey(place) ? { ...place, name: state.place.name, admin1: state.place.admin1 || place.admin1, country: state.place.country || place.country } : place;
+          try { localStorage.setItem("sora-last-place", JSON.stringify(placeToSave)); } catch { /* 保存できなくても利用できます */ }
         } catch (error) {
           if (error.name === "AbortError") return;
-          setStatus("天気を取得できませんでした。通信状態を確認して、もう一度お試しください。", true);
-        } finally {
-          if (!signal.aborted) $("weather-content").classList.remove("loading");
+          if (cached) setStatus(`${place.name} · 保存済みの予報を表示中。更新できませんでした。通信を確認してください。`, true);
+          else setStatus("天気を取得できませんでした。通信状態を確認して、もう一度お試しください。", true);
         }
       }
       function render(data) {
-        const now = data.current, daily = data.daily, hourly = data.hourly;
-        const currentInfo = weatherInfo(now.weather_code, now.is_day);
-        $("current-icon").textContent = currentInfo.icon;
-        $("condition").textContent = currentInfo.text;
-        $("temperature").textContent = Math.round(celsius(now.temperature_2m));
-        $("unit-mark").textContent = state.fahrenheit ? "°F" : "°C";
-        $("feels-like").textContent = degrees(now.apparent_temperature);
-        $("metric-feels").textContent = degrees(now.apparent_temperature);
-        $("humidity").textContent = `${now.relative_humidity_2m}%`;
-        $("wind").textContent = `${Math.round(now.wind_speed_10m)}`;
-        $("precipitation").textContent = `${Number(now.precipitation).toFixed(1)} mm`;
-        $("today-high").textContent = degrees(daily.temperature_2m_max[0]);
-        $("today-low").textContent = degrees(daily.temperature_2m_min[0]);
-        $("today-rain").textContent = `${daily.precipitation_probability_max[0] ?? 0}%`;
-        $("updated").textContent = `${now.time.slice(5, 7)}月${now.time.slice(8, 10)}日 · ${localTime(now.time)} 現在`;
-        $("sunrise").textContent = localTime(daily.sunrise[0]);
-        $("sunset").textContent = localTime(daily.sunset[0]);
-        $("sun-date").textContent = "今日";
-        renderHourly(hourly, now.time);
-        renderWeek(daily);
+        renderHourly(data.hourly, data.current.time);
+        renderWeek(data.forecastDaily || data.daily, state.forecastDays, data.hourly, data.current?.temperature_2m, data.current?.time);
       }
       function renderHourly(hourly, currentTime) {
         let start = hourly.time.findIndex(time => time.slice(0, 13) >= currentTime.slice(0, 13));
@@ -320,93 +745,254 @@
           const index = start + offset;
           const info = weatherInfo(hourly.weather_code[index], 1);
           const label = offset === 0 ? "今" : localTime(time);
-          return `<div class="hour"><time>${label}</time><span class="weather-emoji" aria-label="${info.text}">${info.icon}</span><strong>${degrees(hourly.temperature_2m[index])}</strong><small>☂ ${hourly.precipitation_probability[index] ?? 0}%</small></div>`;
+          const direction = hourly.wind_direction_10m?.[index];
+          const speed = hourly.wind_speed_10m?.[index];
+          const arrowAngle = Number.isFinite(direction) ? direction : 0;
+          const rainChance = hourly.precipitation_probability[index];
+          return `<div class="hour"><time>${label}</time><span class="weather-emoji" aria-label="${info.text}">${info.icon}</span><strong>${degrees(hourly.temperature_2m[index])}</strong><small>☂ ${rainChance == null ? "—" : `${rainChance}%`}</small><span class="hour-wind" title="風向 ${compassDirection(direction)}、風速 ${speed == null ? "不明" : `${Math.round(speed)} km/h`}"><span class="hour-wind-arrow" aria-hidden="true" style="transform:rotate(${arrowAngle}deg)">↑</span><b>${speed == null ? "—" : Math.round(speed)}</b></span></div>`;
         }).join("");
         $("hourly").innerHTML = cards;
       }
-      function renderWeek(daily) {
-        const allMin = Math.min(...daily.temperature_2m_min);
-        const allMax = Math.max(...daily.temperature_2m_max);
-        $("week").innerHTML = daily.time.map((date, i) => {
-          const day = i === 0 ? "今日" : i === 1 ? "明日" : ` ${WDAY[localDate(date)]}曜日`;
+      function renderWeek(daily, requestedDays = 7, hourly = null, currentTemp = null, currentTime = "") {
+        const days = daily?.time?.slice(0, requestedDays) || [];
+        const mins = days.map((_, i) => daily.temperature_2m_min[i] == null ? NaN : Number(daily.temperature_2m_min[i])).filter(Number.isFinite);
+        const maxs = days.map((_, i) => daily.temperature_2m_max[i] == null ? NaN : Number(daily.temperature_2m_max[i])).filter(Number.isFinite);
+        const allMin = mins.length ? Math.min(...mins) : 0;
+        const allMax = maxs.length ? Math.max(...maxs) : 0;
+        const hourlyByDay = new Map();
+        (hourly?.time || []).forEach((time, index) => {
+          const date = time.slice(0, 10);
+          if (!hourlyByDay.has(date)) hourlyByDay.set(date, []);
+          hourlyByDay.get(date).push(index);
+        });
+        $("week").setAttribute("aria-label", `${days.length}日間の天気予報`);
+        $("week").innerHTML = days.map((date, i) => {
+          const day = `${Number(date.slice(5, 7))}月${Number(date.slice(8, 10))}日(${WDAY[localDate(date)]})`;
           const info = weatherInfo(daily.weather_code[i]);
-          const low = celsius(daily.temperature_2m_min[i]), high = celsius(daily.temperature_2m_max[i]);
-          const left = allMax === allMin ? 0 : ((daily.temperature_2m_min[i] - allMin) / (allMax - allMin)) * 45;
-          const width = allMax === allMin ? 100 : Math.max(12, ((daily.temperature_2m_max[i] - daily.temperature_2m_min[i]) / (allMax - allMin)) * 100);
-          return `<div class="day"><span class="day-name ${i === 0 ? "today" : ""}">${day}</span><span class="weather-emoji" aria-label="${info.text}">${info.icon}</span><span class="rain ${daily.precipitation_probability_max[i] > 30 ? "wet" : ""}">☂ ${daily.precipitation_probability_max[i] ?? 0}%</span><span class="range" style="margin-left:${left}%;width:${width}%" aria-hidden="true"></span><span class="temp-low">${Math.round(low)}° <b class="temp-high">${Math.round(high)}°</b></span></div>`;
+          const lowValue = daily.temperature_2m_min[i] == null ? NaN : Number(daily.temperature_2m_min[i]);
+          const highValue = daily.temperature_2m_max[i] == null ? NaN : Number(daily.temperature_2m_max[i]);
+          const low = celsius(lowValue), high = celsius(highValue);
+          const validTemps = Number.isFinite(lowValue) && Number.isFinite(highValue);
+          const left = !validTemps || allMax === allMin ? 0 : ((lowValue - allMin) / (allMax - allMin)) * 100;
+          const width = !validTemps ? 0 : allMax === allMin ? 100 : Math.max(4, ((highValue - lowValue) / (allMax - allMin)) * 100);
+          const rainChance = daily.precipitation_probability_max?.[i];
+          const candidates = hourlyByDay.get(date) || [];
+          const iconMarkup = candidates.length
+            ? [0, 6, 12, 18].map((targetHour, slot) => {
+                const inSlot = candidates.filter(index => {
+                  const hour = Number(hourly.time[index].slice(11, 13));
+                  return hour >= targetHour && hour < targetHour + 6;
+                });
+                const index = inSlot.length ? inSlot[Math.floor(inSlot.length / 2)] : candidates.reduce((best, current) => Math.abs(Number(hourly.time[current].slice(11, 13)) - (targetHour + 3)) < Math.abs(Number(hourly.time[best].slice(11, 13)) - (targetHour + 3)) ? current : best, candidates[0]);
+                const hourLabel = String(targetHour).padStart(2, "0");
+                const slotInfo = weatherInfo(hourly.weather_code[index], targetHour >= 6 && targetHour < 18 ? 1 : 0);
+                const past = Boolean(currentTime) && date === currentTime.slice(0, 10) && hourly.time[index] < currentTime;
+                return `<span class="day-slot ${past ? "past" : ""}" title="${hourLabel}時ごろ ${slotInfo.text}${past ? "（経過済み）" : ""}"><small>${hourLabel}</small><span class="weather-emoji" aria-label="${hourLabel}時ごろ ${slotInfo.text}${past ? "、経過済み" : ""}">${slotInfo.icon}</span></span>`;
+              }).join("")
+            : `<span class="weather-emoji daily-icon" aria-label="${info.text}">${info.icon}</span>`;
+          const horizon = requestedDays > 7 && i >= 7 ? `<small class="day-horizon">長期目安</small>` : "";
+          const currentMarker = currentTemp != null && Number.isFinite(Number(currentTemp)) && allMax > allMin
+            ? `<i class="range-current-marker" style="left:${Math.max(0, Math.min(100, ((Number(currentTemp) - allMin) / (allMax - allMin)) * 100))}%" title="現在 ${Math.round(Number(currentTemp))}°" aria-label="現在気温 ${Math.round(Number(currentTemp))}°"></i>`
+            : "";
+          const rangeLabel = validTemps ? `予想気温 ${Math.round(low)}度から${Math.round(high)}度` : "気温予報なし";
+          return `<div class="day"><span class="day-name ${i === 0 ? "today" : ""}">${day}${horizon}</span><span class="day-icons">${iconMarkup}</span><span class="rain ${rainChance > 30 ? "wet" : ""}">☂ ${rainChance == null ? "—" : `${rainChance}%`}</span><span class="range-track" aria-label="${rangeLabel}"><span class="range" style="left:${left}%;width:${width}%"></span>${currentMarker}</span><span class="temp-low">${Number.isFinite(low) ? `${Math.round(low)}°` : "—"} <b class="temp-high">${Number.isFinite(high) ? `${Math.round(high)}°` : "—"}</b></span></div>`;
         }).join("");
+        $("forecast-note").textContent = requestedDays > 7
+          ? days.length >= 14 ? "今日の経過した時間帯はグレー表示。青い縦線は現在気温です。8日目以降は長期の目安（正式なA/B/C確度ではありません）。" : "2週間分の予報を取得できませんでした。更新して再度お試しください。"
+          : "今日の経過した時間帯はグレー表示。青い縦線は現在気温です。";
       }
-      async function searchCity(query) {
-        const params = new URLSearchParams({ name: query, count: "6", language: "ja", format: "json" });
-        return getJson(`https://geocoding-api.open-meteo.com/v1/search?${params}`);
+      async function searchCity(query, signal) {
+        const normalized = query.replace(/[\s　]/g, "").replace(/[都道府県]$/, "");
+        const preset = cityPresets.get(normalized);
+        if (preset) return { results: [{ ...preset }] };
+        const params = new URLSearchParams({ name: query, count: "10", language: "ja", countryCode: "JP", format: "json" });
+        return getJson(`https://geocoding-api.open-meteo.com/v1/search?${params}`, { signal });
       }
-      function showSuggestions(results) {
+      let searchTimer = null;
+      let searchController = null;
+      let searchResults = [];
+      let activeSuggestion = -1;
+      function closeSuggestions() {
         const box = $("suggestions");
-        if (!results || !results.length) {
-          box.innerHTML = `<div class="suggestion"><span><strong>場所が見つかりません</strong></span><small>別の都市名で検索</small></div>`;
-        } else {
-          box.innerHTML = results.map((place, index) => {
-            const name = [place.name, place.admin1, place.country].filter((v, i, a) => v && a.indexOf(v) === i).join(" · ");
-            return `<button class="suggestion" type="button" role="option" data-index="${index}"><strong>${name}</strong><small>${place.latitude.toFixed(2)}, ${place.longitude.toFixed(2)}</small></button>`;
-          }).join("");
-          box.querySelectorAll("[data-index]").forEach(button => button.addEventListener("click", () => {
-            const selected = results[Number(button.dataset.index)];
-            box.classList.remove("open");
-            $("city-search").value = "";
-            loadWeather(selected);
-          }));
-        }
-        box.classList.add("open");
+        if (searchController) searchController.abort();
+        box.classList.remove("open");
+        $("city-search").setAttribute("aria-expanded", "false");
+        $("city-search").removeAttribute("aria-activedescendant");
+        activeSuggestion = -1;
       }
+      function showSuggestions(results, message = "") {
+        const box = $("suggestions"), input = $("city-search");
+        searchResults = results || [];
+        activeSuggestion = -1;
+        box.replaceChildren();
+        if (message) {
+          const note = document.createElement("div");
+          note.className = "suggestions-message";
+          note.textContent = message;
+          box.append(note);
+        }
+        searchResults.forEach((place, index) => {
+          const option = document.createElement("button");
+          option.className = "suggestion";
+          option.type = "button";
+          option.id = `city-option-${index}`;
+          option.setAttribute("role", "option");
+          option.setAttribute("aria-selected", "false");
+          const title = document.createElement("strong");
+          title.textContent = [place.name, place.admin1, place.country].filter((v, i, a) => v && a.indexOf(v) === i).join(" · ");
+          const detail = document.createElement("small");
+          detail.textContent = `${Number(place.latitude).toFixed(2)}, ${Number(place.longitude).toFixed(2)}`;
+          option.append(title, detail);
+          option.addEventListener("click", () => selectSuggestion(index));
+          box.append(option);
+        });
+        box.classList.add("open");
+        input.setAttribute("aria-expanded", "true");
+      }
+      function selectSuggestion(index) {
+        const selected = searchResults[index];
+        if (!selected) return;
+        if (searchController) searchController.abort();
+        closeSuggestions();
+        $("city-search").value = "";
+        loadWeather(selected);
+      }
+      function setActiveSuggestion(index) {
+        const options = [...$("suggestions").querySelectorAll('[role="option"]')];
+        if (!options.length) return;
+        activeSuggestion = (index + options.length) % options.length;
+        options.forEach((option, optionIndex) => option.setAttribute("aria-selected", String(optionIndex === activeSuggestion)));
+        $("city-search").setAttribute("aria-activedescendant", options[activeSuggestion].id);
+        options[activeSuggestion].scrollIntoView({ block: "nearest" });
+      }
+      async function updateSuggestions(query) {
+        if (searchController) searchController.abort();
+        if (query.length < 2) { searchResults = []; closeSuggestions(); return; }
+        searchController = new AbortController();
+        const controller = searchController;
+        showSuggestions([], "候補を検索しています…");
+        try {
+          const result = await searchCity(query, controller.signal);
+          if (controller.signal.aborted || $("city-search").value.trim() !== query) return;
+          const results = result.results || [];
+          showSuggestions(results, results.length ? "" : "該当する場所が見つかりません。別の表記もお試しください。");
+        } catch (error) {
+          if (error.name === "AbortError") return;
+          if ($("city-search").value.trim() === query) showSuggestions([], "検索できませんでした。通信状態を確認してください。");
+        }
+      }
+      $("city-search").addEventListener("input", () => {
+        clearTimeout(searchTimer);
+        const query = $("city-search").value.trim();
+        if (searchController) searchController.abort();
+        searchResults = [];
+        if (query.length < 2) { closeSuggestions(); return; }
+        showSuggestions([], "候補を検索しています…");
+        searchTimer = setTimeout(() => updateSuggestions(query), 280);
+      });
       $("search-form").addEventListener("submit", async (event) => {
         event.preventDefault();
         const query = $("city-search").value.trim();
         if (query.length < 2) { setStatus("都市名を2文字以上入力してください。", true); return; }
-        $("suggestions").classList.remove("open");
-        setStatus("場所を検索しています…");
-        try {
-          const result = await searchCity(query);
-          showSuggestions(result.results || []);
-          setStatus(result.results?.length ? "候補から場所を選んでください。" : "該当する場所が見つかりませんでした。", !result.results?.length);
-        } catch {
-          setStatus("場所を検索できませんでした。通信状態を確認してください。", true);
-        }
+        clearTimeout(searchTimer);
+        if (searchResults.length) { selectSuggestion(activeSuggestion >= 0 ? activeSuggestion : 0); return; }
+        await updateSuggestions(query);
       });
       $("city-search").addEventListener("keydown", (event) => {
-        if (event.key === "Escape") $("suggestions").classList.remove("open");
+        if (event.key === "Escape") { closeSuggestions(); return; }
+        if (event.key === "ArrowDown" && $("suggestions").classList.contains("open")) { event.preventDefault(); setActiveSuggestion(activeSuggestion + 1); }
+        else if (event.key === "ArrowUp" && $("suggestions").classList.contains("open")) { event.preventDefault(); setActiveSuggestion(activeSuggestion <= 0 ? searchResults.length - 1 : activeSuggestion - 1); }
+        else if (event.key === "Enter" && searchResults.length) { event.preventDefault(); selectSuggestion(activeSuggestion >= 0 ? activeSuggestion : 0); }
       });
       document.addEventListener("click", (event) => {
-        if (!event.target.closest(".search-area")) $("suggestions").classList.remove("open");
+        if (!event.target.closest(".search-area")) closeSuggestions();
       });
-      document.querySelectorAll("[data-city]").forEach(button => button.addEventListener("click", async () => {
-        const city = button.dataset.city;
-        setStatus(`${city}を検索しています…`);
-        try {
-          const result = await searchCity(city);
-          if (result.results?.[0]) loadWeather(result.results[0]);
-          else setStatus(`${city}が見つかりませんでした。`, true);
-        } catch { setStatus("場所を検索できませんでした。通信状態を確認してください。", true); }
-      }));
-      $("locate").addEventListener("click", () => {
-        if (!navigator.geolocation) { setStatus("このブラウザーでは現在地を利用できません。", true); return; }
-        setStatus("現在地を確認しています…");
+      function locateCurrent(silent = false, onFailure = null) {
+        if (!navigator.geolocation) { if (onFailure) onFailure(); else setStatus("このブラウザーでは現在地を利用できません。", true); return; }
+        if (!silent) setStatus("現在地を確認しています…");
         navigator.geolocation.getCurrentPosition(
-          ({ coords }) => loadWeather({ name: "現在地", country: "位置情報", latitude: coords.latitude, longitude: coords.longitude }),
-          () => setStatus("現在地を取得できませんでした。位置情報の許可を確認してください。", true),
-          { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+          ({ coords }) => {
+            const place = { name: "現在地", country: "日本", latitude: coords.latitude, longitude: coords.longitude };
+            loadWeather(place);
+            nameCurrentLocation(place);
+          },
+          () => { if (onFailure) onFailure(); else if (!silent) setStatus("現在地を取得できませんでした。位置情報の許可を確認するか、都市名を検索してください。", true); },
+          { enableHighAccuracy: false, timeout: 4000, maximumAge: 300000 }
         );
+      }
+      $("location-current").addEventListener("click", () => locateCurrent(false));
+      $("register-place-button").addEventListener("click", () => {
+        if (savedPlaces.length >= 6) { setStatus("登録できる場所は6件までです。不要な場所を解除してください。", true); return; }
+        $("register-place-form").hidden = false;
+        $("register-place-name").value = "";
+        $("register-place-name").focus();
       });
-      $("unit-toggle").addEventListener("click", () => {
-        state.fahrenheit = !state.fahrenheit;
-        $("unit-toggle").textContent = state.fahrenheit ? "°F" : "°C";
-        if (state.data) render(state.data);
+      $("cancel-register-place").addEventListener("click", () => { $("register-place-form").hidden = true; });
+      $("register-place-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const label = $("register-place-name").value.trim();
+        if (!label) { setStatus("登録名を入力してください。", true); return; }
+        if (!Number.isFinite(Number(state.place.latitude)) || !Number.isFinite(Number(state.place.longitude))) {
+          setStatus("先に現在地を取得するか、都市名を検索してください。", true);
+          return;
+        }
+        savedPlaces.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, label, place: { ...state.place } });
+        try { localStorage.setItem(savedPlacesKey, JSON.stringify(savedPlaces)); } catch { savedPlaces.pop(); setStatus("場所を保存できませんでした。ブラウザーの保存設定を確認してください。", true); return; }
+        renderSavedPlaces();
+        $("register-place-form").hidden = true;
+        setStatus(`${label}を登録しました。`);
       });
+      $("locate").addEventListener("click", () => locateCurrent(false));
+      $("refresh").addEventListener("click", () => loadWeather(state.place));
       let initialPlace = state.place;
       try {
         const stored = JSON.parse(localStorage.getItem("sora-last-place"));
-        if (stored?.latitude && stored?.longitude && stored?.name) initialPlace = stored;
+        if (Number.isFinite(stored?.latitude) && Number.isFinite(stored?.longitude) && stored?.name) initialPlace = stored;
       } catch { /* 初期値の東京を利用 */ }
-      loadWeather(initialPlace);
+      const initialCache = readCache(initialPlace);
+      if (initialCache) {
+        state.data = initialCache.data;
+        state.savedAt = initialCache.savedAt;
+        state.place = initialPlace;
+        setPlaceName(initialPlace);
+        renderSavedPlaces();
+        render(initialCache.data);
+        setStatus(`${initialPlace.name} · 保存済みの予報を表示しながら更新中`);
+      }
+      if ("geolocation" in navigator) locateCurrent(true, () => loadWeather(initialPlace));
+      else loadWeather(initialPlace);
+
+      document.querySelectorAll("[data-forecast-days]").forEach((button) => button.addEventListener("click", () => {
+        state.forecastDays = Number(button.dataset.forecastDays);
+        document.querySelectorAll("[data-forecast-days]").forEach((tab) => tab.setAttribute("aria-pressed", String(tab === button)));
+        if (state.data) renderWeek(state.data.forecastDaily || state.data.daily, state.forecastDays, state.data.hourly, state.data.current?.temperature_2m, state.data.current?.time);
+      }));
+      $("radar-refresh").addEventListener("click", () => loadRadar(true));
+      $("radar-range").addEventListener("input", (event) => {
+        stopRadarPlayback();
+        const targetMinutes = Number(event.target.value);
+        const nearestIndex = radarFrames.reduce((bestIndex, frame, index) => {
+          const offset = (radarDate(frame.validtime) - radarDate(radarFrames[radarNowIndex].validtime)) / 60000;
+          const bestOffset = (radarDate(radarFrames[bestIndex].validtime) - radarDate(radarFrames[radarNowIndex].validtime)) / 60000;
+          return Math.abs(offset - targetMinutes) < Math.abs(bestOffset - targetMinutes) ? index : bestIndex;
+        }, 0);
+        showRadarFrame(nearestIndex);
+      });
+      $("radar-play").addEventListener("click", startRadarPlayback);
+      const radarFullscreenButton = $("radar-fullscreen");
+      function setRadarFullscreen(isFullscreen) {
+        $("radar-view").classList.toggle("is-fullscreen", isFullscreen);
+        document.body.classList.toggle("radar-fullscreen-open", isFullscreen);
+        radarFullscreenButton.setAttribute("aria-pressed", String(isFullscreen));
+        radarFullscreenButton.textContent = isFullscreen ? "全画面を閉じる" : "全画面表示";
+        window.setTimeout(() => radarMap?.invalidateSize(), 80);
+      }
+      radarFullscreenButton.addEventListener("click", () => setRadarFullscreen(!$("radar-view").classList.contains("is-fullscreen")));
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && $("radar-view").classList.contains("is-fullscreen")) setRadarFullscreen(false);
+      });
+      const scheduleRadarLoad = window.requestIdleCallback || ((callback) => setTimeout(callback, 300));
+      scheduleRadarLoad(() => loadRadar());
     })();
   </script>
 </body>
